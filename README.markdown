@@ -25,9 +25,7 @@ Task  |  Training Accuracy  |  Validation Accuracy  |
 5     |  100               |  98.42		            |
 6     |  76.61               |  47.08		            |
 
-![](plots/Training%20Accuracy.png)
-![](plots/Validation%20Accuracy.png)
-![](plots/Training%20Loss.png)
+![](plots/collage.png)
 
 ## Papers
 
