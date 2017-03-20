@@ -39,10 +39,10 @@ class MemN2NDialog(object):
     def __init__(self, batch_size, vocab_size, candidates_size, sentence_size, embedding_size,
         candidates_vec,
         hops=3,
-        max_grad_norm=40.0,
+        max_grad_norm=80.0,
         nonlin=None,
         initializer=tf.random_normal_initializer(stddev=0.1),
-        optimizer=tf.train.AdamOptimizer(learning_rate=1e-2),
+        optimizer=tf.train.AdamOptimizer(learning_rate=1e-3, epsilon=1e-8),
         session=tf.Session(),
         name='MemN2N'):
         """Creates an End-To-End Memory Network
@@ -104,14 +104,14 @@ class MemN2NDialog(object):
         # cross entropy
         logits = self._inference(self._stories, self._queries) # (batch_size, candidates_size)
         cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=self._answers, name="cross_entropy")
-        cross_entropy_sum = tf.reduce_sum(cross_entropy, name="cross_entropy_sum")
+        cross_entropy_mean = tf.reduce_mean(cross_entropy, name="cross_entropy_mean")
 
         # loss op
-        loss_op = cross_entropy_sum
+        loss_op = cross_entropy_mean
 
         # gradient pipeline
         grads_and_vars = self._opt.compute_gradients(loss_op)
-        grads_and_vars = [(tf.clip_by_norm(g, self._max_grad_norm), v) for g,v in grads_and_vars]
+        #grads_and_vars = [(tf.clip_by_norm(g, self._max_grad_norm), v) for g,v in grads_and_vars]
         #grads_and_vars = [(add_gradient_noise(g), v) for g,v in grads_and_vars]
         nil_grads_and_vars = []
         for g, v in grads_and_vars:
