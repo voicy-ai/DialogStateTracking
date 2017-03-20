@@ -40,3 +40,7 @@ Task  |  Training Accuracy  |  Validation Accuracy  |
 
 - OOV : Out Of Vocabulary
 - hops : number of memory lookups
+
+## Credits
+
+- Tweaked [vyraun](https://github.com/vyraun/chatbot-MemN2N-tensorflow)'s [chatbot-MemN2N-tensorflow](https://github.com/vyraun/chatbot-MemN2N-tensorflow) repository, for using Memory Networks for bAbI dialog tasks
