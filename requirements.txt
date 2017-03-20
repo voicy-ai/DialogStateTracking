@@ -1,6 +1,6 @@
-tensorflow==1.0.1
+#tensorflow>=1.0.0
 numpy==1.12.0
-sklearn==0.18.1
+sklearn
 six==1.10.0
 appdirs==1.4.3
 click==6.7
@@ -9,7 +9,6 @@ itsdangerous==0.24
 Jinja2==2.9.5
 MarkupSafe==1.0
 packaging==16.8
-pkg-resources==0.0.0
 pyparsing==2.2.0
 six==1.10.0
 Werkzeug==0.12.1
