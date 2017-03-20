@@ -1,4 +1,5 @@
-DATA_SOURCE = 'dialog-bAbI-tasks/dialog-babi-candidates.txt'
+DATA_SOURCE = 'data/dialog-bAbI-tasks/dialog-babi-candidates.txt'
+DATA_SOURCE_TASK6 = 'data/dialog-bAbI-tasks/dialog-babi-task6-dstc2-candidates.txt'
 DATA_DIR = 'dialog-bAbI-tasks/dialog-babi-candidates.txt'
 STOP_WORDS=set(["a","an","the"])
 
@@ -32,6 +33,8 @@ def tokenize(sent):
 def load_candidates(task_id, candidates_f=DATA_SOURCE):
     # containers
     candidates, candid2idx, idx2candid = [], {}, {}
+    # update data source file based on task id
+    candidates_f = DATA_SOURCE_TASK6 if task_id==6 else candidates_f
     # read from file
     with open(candidates_f) as f:
         # iterate through lines

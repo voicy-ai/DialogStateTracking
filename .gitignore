@@ -5,3 +5,6 @@
 __pycache__
 *.tgz
 *.zip
+doc/
+data/
+log/log.txt

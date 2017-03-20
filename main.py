@@ -108,7 +108,7 @@ if __name__ == '__main__':
         # training and evaluation loop
         print('\n>> Training started!\n')
         # write log to file
-        log_handle = open(args['log_file'], 'w')
+        log_handle = open('log/' + args['log_file'], 'w')
         cost_total = 0
         for i in range(epochs+1):
 
