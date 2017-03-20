@@ -3,4 +3,5 @@
 .ipynb_checkpoints
 *.ipynb
 __pycache__
-
+*.tgz
+*.zip
