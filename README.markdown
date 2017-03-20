@@ -1,8 +1,33 @@
-# Practical Dialog System
+# End-to-End Neural Networks for Goal Oriented Dialog
+
+The objective of this project is to explore neural network architectures for question answering and goal oriented dialog systems. We will train on [(6) dialog bAbI tasks](https://research.fb.com/downloads/babi/). Tensorflow is used for building the models. I have listed some of the influential/interesting papers below. If I have missed something, let me know.
+
+## Setup
+
+```bash
+# python2 is not supported
+sudo -H pip3 install -r requirements.txt
+# if this doesn't work, raise an issue
+```
 
 ## Learning End-to-End Goal-Oriented Dialog
 
 ![](https://camo.githubusercontent.com/ba1c7dbbccc5dd51d4a76cc6ef849bca65a9bf4d/687474703a2f2f692e696d6775722e636f6d2f6e7638394a4c632e706e67)
+
+### Results
+
+Task  |  Training Accuracy  |  Validation Accuracy  |
+------|---------------------|-----------------------|
+1     |  100	              |  99.7		            |
+2     |  100                |  100		            |
+3     |  100               |  74.71		            |
+4     |  100               |  56.67		            |
+5     |  100               |  98.42		            |
+6     |  76.61               |  47.08		            |
+
+![]("plots/Training Accuracy.png")
+![]("plots/Validation Accuracy.png")
+![]("plots/Training Loss.png")
 
 ## Papers
 
@@ -16,3 +41,4 @@
 ## Jargons
 
 - OOV : Out Of Vocabulary
+- hops : number of memory lookups
