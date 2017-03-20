@@ -1,5 +1,8 @@
 # Practical Dialog System
 
+## Learning End-to-End Goal-Oriented Dialog
+
+![](https://camo.githubusercontent.com/ba1c7dbbccc5dd51d4a76cc6ef849bca65a9bf4d/687474703a2f2f692e696d6775722e636f6d2f6e7638394a4c632e706e67)
 
 ## Papers
 
