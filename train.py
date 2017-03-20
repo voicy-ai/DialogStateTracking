@@ -1,11 +1,19 @@
 import data.data_utils as data_utils
-import memn2n_dialog as memn2n
+import models.memn2n as memn2n
 
 from sklearn import metrics
 import numpy as np
 
 DATA_DIR = 'data/dialog-bAbI-tasks/'
 BATCH_SIZE = 16
+
+'''
+    dictionary of models
+        select model from here
+'''
+model = {
+        'memn2n' : memn2n.MemN2NDialog
+        }# add models, as you implement
 
 
 '''
@@ -21,6 +29,7 @@ def batch_predict(S,Q,n, batch_size):
         pred = model.predict(s, q)
         preds += list(pred)
     return preds
+
 
 
 if __name__ == '__main__':
@@ -48,19 +57,20 @@ if __name__ == '__main__':
     candidates_vec = data_utils.vectorize_candidates(candidates, w2idx, candidate_sentence_size)
     #
     # create model
-    model = memn2n.MemN2NDialog(
-            batch_size= BATCH_SIZE,
-            vocab_size= vocab_size, 
-            candidates_size= n_cand, 
-            sentence_size= sentence_size, 
-            embedding_size= 20, 
-            candidates_vec= candidates_vec, 
-            hops= 3)
+    model = model['memn2n']( # why?
+                batch_size= BATCH_SIZE,
+                vocab_size= vocab_size, 
+                candidates_size= n_cand, 
+                sentence_size= sentence_size, 
+                embedding_size= 20, 
+                candidates_vec= candidates_vec, 
+                hops= 3
+            )
     # gather data in batches
     train, val, test, batches = data_utils.get_batches(train, val, test, metadata, batch_size=BATCH_SIZE)
     # training starts here
     epochs = 500
-    eval_interval = 10
+    eval_interval = 1
     #
     # training and evaluation loop
     print('\n>> Training started!\n')
