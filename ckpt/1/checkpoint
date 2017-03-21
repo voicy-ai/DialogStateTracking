@@ -1,0 +1,2 @@
+model_checkpoint_path: "memn2n_model.ckpt-200"
+all_model_checkpoint_paths: "memn2n_model.ckpt-200"
