@@ -175,7 +175,7 @@ if __name__ == '__main__':
         #print('\nDude! where\'s the inference? \nNot implemented yet. Come back!')
         #
         #  restore checkpoint
-        ckpt = tf.train.get_checkpoint_state(CKPT_DIR)
+        ckpt = tf.train.get_checkpoint_state(CKPT_DIR + args['task_id'])
         if ckpt and ckpt.model_checkpoint_path:
             print('\n>> restoring checkpoint from', ckpt.model_checkpoint_path)
             model.saver.restore(model._sess, ckpt.model_checkpoint_path)
