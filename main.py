@@ -143,7 +143,7 @@ if __name__ == '__main__':
         # write log to file
         log_handle = open('log/' + args['log_file'], 'w')
         cost_total = 0.
-        best_validation_accuracy = 0.
+        #best_validation_accuracy = 0.
         for i in range(epochs+1):
 
             for start, end in batches:
@@ -164,10 +164,10 @@ if __name__ == '__main__':
                 cost_total = 0. # empty cost
                 #
                 # save the best model, to disk
-                if val_acc > best_validation_accuracy:
-                    best_validation_accuracy = val_acc
-                    model.saver.save(model._sess, CKPT_DIR + '{}/memn2n_model.ckpt'.format(args['task_id']), 
-                            global_step=i)
+                #if val_acc > best_validation_accuracy:
+                #best_validation_accuracy = val_acc
+                model.saver.save(model._sess, CKPT_DIR + '{}/memn2n_model.ckpt'.format(args['task_id']), 
+                        global_step=i)
         # close file
         log_handle.close()
 
