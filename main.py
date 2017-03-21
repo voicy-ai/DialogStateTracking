@@ -6,8 +6,12 @@ import numpy as np
 
 import argparse
 
+import tensorflow as tf
+
+
 DATA_DIR = 'data/dialog-bAbI-tasks/'
 BATCH_SIZE = 16
+CKPT_DIR= 'ckpt/'
 
 '''
     dictionary of models
@@ -59,6 +63,35 @@ def parse_args():
     return args
 
 
+def interactive(model, idx2candid, w2idx, sentence_size, batch_size, n_cand, memory_size):
+    context=[]
+    u=None
+    r=None
+    nid=1
+    while True:
+        line=input('--> ').strip().lower()
+        if line=='exit':
+            break
+        if line=='restart':
+            context=[]
+            nid=1
+            print("clear memory")
+            continue
+        u=data_utils.tokenize(line)
+        data=[(context,u,-1)]
+        s, q, a = data_utils.vectorize_data(data, w2idx, sentence_size, 1, n_cand, memory_size)
+        preds = model.predict(s,q)
+        r = idx2candid[preds[0]]
+        print(r)
+        r = data_utils.tokenize(r)
+        u.append('$u')
+        u.append('#'+str(nid))
+        r.append('$r')
+        r.append('#'+str(nid))
+        context.append(u)
+        context.append(r)
+        nid+=1
+
 
 if __name__ == '__main__':
     # get user arguments
@@ -109,7 +142,8 @@ if __name__ == '__main__':
         print('\n>> Training started!\n')
         # write log to file
         log_handle = open('log/' + args['log_file'], 'w')
-        cost_total = 0
+        cost_total = 0.
+        best_validation_accuracy = 0.
         for i in range(epochs+1):
 
             for start, end in batches:
@@ -127,9 +161,23 @@ if __name__ == '__main__':
                      format(i, train_acc, val_acc))
                 log_handle.write('{} {} {} {}\n'.format(i, train_acc, val_acc, 
                     cost_total/(eval_interval*len(batches))))
-                cost_total = 0 # empty cost
+                cost_total = 0. # empty cost
+                #
+                # save the best model, to disk
+                if val_acc > best_validation_accuracy:
+                    best_validation_accuracy = val_acc
+                    model.saver.save(model._sess, CKPT_DIR + '{}/memn2n_model.ckpt'.format(args['task_id']), 
+                            global_step=i)
         # close file
         log_handle.close()
 
     else: # inference
-        print('\nDude! where\'s the inference? \nNot implemented yet. Come back!')
+        #print('\nDude! where\'s the inference? \nNot implemented yet. Come back!')
+        #
+        #  restore checkpoint
+        ckpt = tf.train.get_checkpoint_state(CKPT_DIR)
+        if ckpt and ckpt.model_checkpoint_path:
+            print('\n>> restoring checkpoint from', ckpt.model_checkpoint_path)
+            model.saver.restore(model._sess, ckpt.model_checkpoint_path)
+        # start interactive session
+        interactive(model, idx2candid, w2idx, sentence_size, BATCH_SIZE, n_cand, memory_size)

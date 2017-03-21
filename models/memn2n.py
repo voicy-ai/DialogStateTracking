@@ -96,6 +96,7 @@ class MemN2NDialog(object):
         self._opt = optimizer
         self._name = name
         self._candidates=candidates_vec
+        self.saver = None
 
         self._build_inputs()
         self._build_vars()
@@ -136,6 +137,7 @@ class MemN2NDialog(object):
         init_op = tf.global_variables_initializer()
         self._sess = session
         self._sess.run(init_op)
+        self.saver = tf.train.Saver()
 
 
     def _build_inputs(self):
