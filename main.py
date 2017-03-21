@@ -63,35 +63,48 @@ def parse_args():
     return args
 
 
-def interactive(model, idx2candid, w2idx, sentence_size, batch_size, n_cand, memory_size):
-    context=[]
-    u=None
-    r=None
-    nid=1
-    while True:
-        line=input('--> ').strip().lower()
-        if line=='exit':
-            break
-        if line=='restart':
-            context=[]
-            nid=1
-            print("clear memory")
-            continue
-        u=data_utils.tokenize(line)
-        data=[(context,u,-1)]
-        s, q, a = data_utils.vectorize_data(data, w2idx, sentence_size, 1, n_cand, memory_size)
-        preds = model.predict(s,q)
-        r = idx2candid[preds[0]]
-        print(r)
-        r = data_utils.tokenize(r)
-        u.append('$u')
-        u.append('#'+str(nid))
-        r.append('$r')
-        r.append('#'+str(nid))
-        context.append(u)
-        context.append(r)
-        nid+=1
+class InteractiveSession():
 
+    def __init__(self, model, idx2candid, w2idx, n_cand, memory_size):
+        self.context = []
+        self.u = None
+        self.r = None
+        self.nid = 1
+        self.model = model
+        self.idx2candid = idx2candid
+        self.w2idx = w2idx
+        self.n_cand = model._candidates_size
+        self.memory_size = memory_size
+
+    def reply(self, msg):
+        line = msg.strip().lower()
+        if line == 'clear':
+            self.context = []
+            self.nid = 1
+            reply_msg = 'memory cleared!'
+        else:
+            u = data_utils.tokenize(line)
+            data = [(self.context, u, -1)]
+            s, q, a = data_utils.vectorize_data(data, 
+                    self.w2idx, 
+                    model._sentence_size, 
+                    1, 
+                    self.n_cand, 
+                    self.memory_size)
+            preds = model.predict(s,q)
+            r = self.idx2candid[preds[0]]
+            reply_msg = r
+            r = data_utils.tokenize(r)
+            u.append('$u')
+            u.append('#'+str(self.nid))
+            r.append('$r')
+            r.append('#'+str(self.nid))
+            self.context.append(u)
+            self.context.append(r)
+            self.nid+=1
+        return reply_msg
+
+                   
 
 if __name__ == '__main__':
     # get user arguments
@@ -179,5 +192,12 @@ if __name__ == '__main__':
         if ckpt and ckpt.model_checkpoint_path:
             print('\n>> restoring checkpoint from', ckpt.model_checkpoint_path)
             model.saver.restore(model._sess, ckpt.model_checkpoint_path)
-        # start interactive session
-        interactive(model, idx2candid, w2idx, sentence_size, BATCH_SIZE, n_cand, memory_size)
+        #  interactive(model, idx2candid, w2idx, sentence_size, BATCH_SIZE, n_cand, memory_size)
+
+        # create an interactive session instance
+        isess = InteractiveSession(model, idx2candid, w2idx, n_cand, memory_size)
+
+        query = ''
+        while query!= 'exit':
+            query = input('>> ')
+            print('>> ' + isess.reply(query))
