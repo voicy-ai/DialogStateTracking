@@ -30,7 +30,7 @@ model = {
     run prediction on dataset
 
 '''
-def batch_predict(S,Q,n, batch_size):
+def batch_predict(model, S,Q,n, batch_size):
     preds = []
     for start in range(0, n, batch_size):
         end = start + batch_size
@@ -224,8 +224,8 @@ def main(args):
                 cost_total += model.batch_fit(s, q, a)
             
             if i%eval_interval == 0 and i:
-                train_preds = batch_predict(train['s'], train['q'], len(train['s']), batch_size=BATCH_SIZE)
-                val_preds = batch_predict(val['s'], val['q'], len(val['s']), batch_size=BATCH_SIZE)
+                train_preds = batch_predict(model, train['s'], train['q'], len(train['s']), batch_size=BATCH_SIZE)
+                val_preds = batch_predict(model, val['s'], val['q'], len(val['s']), batch_size=BATCH_SIZE)
                 train_acc = metrics.accuracy_score(np.array(train_preds), train['a'])
                 val_acc = metrics.accuracy_score(val_preds, val['a'])
                 print('Epoch[{}] : <ACCURACY>\n\ttraining : {} \n\tvalidation : {}'.
