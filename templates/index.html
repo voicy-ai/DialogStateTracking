@@ -1,4 +1,79 @@
-<!DOCTYPE html>
-<html >
-	Nothing interesting here!
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<title>Test</title>
+<style>
+	body{
+		background:#3899E8;
+		color:#fff;
+		margin:0 auto;
+		padding:0;
+		font-size:20px;
+	}
+	.btn.btn-lg.btn-danger.dropdown-toggle{
+		padding-top:19.5px;
+		padding-bottom:19.5px;
+	}
+	textarea{
+		resize:none;
+	}
+</style>
+</head>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$(".btn.btn-lg.btn-danger").click(function(){
+			$.ajax({
+				url:'/query', //keep here python url
+				data: { 'msg' : $('#question').val() }, //pass data here ex: 'action=someation&name=pallavi',
+				success:function(msg){
+					alert(msg); // place succes code here
+				}
+			});
+		});
+	});
+	</script>
+<body>
+	<div class="container">
+		<h1>Dynamic Memory Network by MetaMind</h1><br/>
+		<div class="col-sm-10">
+		  <form>
+			<div class="form-group">
+				<label for="story">Story</label>
+				<textarea class="form-control" rows="10" placeholder="Textarea"></textarea>
+			</div>
+			<div class="form-group">
+				<label for="question">Question</label>
+				<input type="text" class="form-control" name="question" id="question" value="What is your name?" />
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="">
+						<!-- Split button -->
+						<div class="btn-group">
+						  <button type="button" class="btn btn-lg btn-danger" onclick="">Run DMN</button>
+						  <button type="button" class="btn btn-lg btn-danger dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="caret"></span>
+							<span class="sr-only">Toggle Dropdown</span>
+						  </button>
+						  <ul class="dropdown-menu">
+							<li><a href="#">Action</a></li>
+							<li><a href="#">Another action</a></li>
+							<li><a href="#">Something else here</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="#">Separated link</a></li>
+						  </ul>
+						</div>				
+					</div>
+				</div>
+				<div class="col-sm-6 text-right"><button type="button" class="btn btn-lg btn-warning">Get new example</button></div>
+			</div>			
+		  </form>
+		</div>
+	</div>
+	
+</body>
 </html>

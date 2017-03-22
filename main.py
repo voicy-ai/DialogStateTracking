@@ -89,6 +89,8 @@ def parse_args(args):
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-i', '--infer', action='store_true',
                         help='perform inference in an interactive session')
+    group.add_argument('--ui', action='store_true',
+                        help='interact through web app(flask); do not call this from cmd line')
     group.add_argument('-t', '--train', action='store_true',
                         help='train model')
     group.add_argument('-d', '--prep_data', action='store_true',
@@ -259,6 +261,8 @@ def main(args):
             while query!= 'exit':
                 query = input('>> ')
                 print('>> ' + isess.reply(query))
+        elif args['ui']:
+            return isess
 
 
 # _______MAIN_______
