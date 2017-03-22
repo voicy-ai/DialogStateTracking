@@ -8,8 +8,12 @@ import argparse
 
 import tensorflow as tf
 
+import pickle as pkl
+import sys
+
 
 DATA_DIR = 'data/dialog-bAbI-tasks/'
+P_DATA_DIR = 'data/processed/'
 BATCH_SIZE = 16
 CKPT_DIR= 'ckpt/'
 
@@ -38,6 +42,44 @@ def batch_predict(S,Q,n, batch_size):
 
 
 '''
+    preprocess data
+
+'''
+def prepare_data(args):
+    # get candidates (restaurants)
+    candidates, candid2idx, idx2candid = data_utils.load_candidates(task_id= args['task_id'],
+                                                candidates_f= DATA_DIR + 'dialog-babi-candidates.txt')
+    # get data
+    train, test, val = data_utils.load_dialog_task(
+            data_dir= DATA_DIR, 
+            task_id= args['task_id'],
+            candid_dic= candid2idx, 
+            isOOV= False)
+    ##
+    # get metadata
+    metadata = data_utils.build_vocab(train + test + val, candidates)
+
+    ###
+    # write data to file
+    data_ = {
+            'candidates' : candidates,
+            'train' : train,
+            'test' : test,
+            'val' : val
+            }
+    with open(P_DATA_DIR + str(args['task_id']) + '.data.pkl', 'wb') as f:
+        pkl.dump(data_, f)
+
+    ### 
+    # save metadata to disk
+    metadata['candid2idx'] = candid2idx
+    metadata['idx2candid'] = idx2candid
+    
+    with open(P_DATA_DIR + str(args['task_id']) + '.metadata.pkl', 'wb') as f:
+        pkl.dump(metadata, f)
+
+
+'''
     parse arguments
 
 '''
@@ -46,9 +88,11 @@ def parse_args():
             description='Train Model for Goal Oriented Dialog Task : bAbI(6)')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-i', '--infer', action='store_true',
-                        help='perform inference')
+                        help='perform inference in an interactive session')
     group.add_argument('-t', '--train', action='store_true',
                         help='train model')
+    group.add_argument('-d', '--prep_data', action='store_true',
+                        help='prepare data')
     parser.add_argument('--task_id', required=False, type=int, default=1,
                         help='Task Id in bAbI (6) tasks {1-6}')
     parser.add_argument('--batch_size', required=False, type=int, default=16,
@@ -109,20 +153,28 @@ class InteractiveSession():
 if __name__ == '__main__':
     # get user arguments
     args = parse_args()
-    # get candidates (restaurants)
-    print('task id', args['task_id'])
-    candidates, candid2idx, idx2candid = data_utils.load_candidates(task_id= args['task_id'],
-                                                candidates_f= DATA_DIR + 'dialog-babi-candidates.txt')
-    # get data
-    train, test, val = data_utils.load_dialog_task(
-            data_dir= DATA_DIR, 
-            task_id= args['task_id'],
-            candid_dic= candid2idx, 
-            isOOV= False)
-    ##
-    # get metadata
-    metadata = data_utils.build_vocab(train + test + val, candidates)
-    # gather information from metadata
+
+    # prepare data
+    if args['prep_data']:
+        print('\n>> Preparing Data\n')
+        prepare_data(args)
+        sys.exit()
+
+    # ELSE
+    # read data and metadata from pickled files
+    with open(P_DATA_DIR + str(args['task_id']) + '.metadata.pkl', 'rb') as f:
+        metadata = pkl.load(f)
+    with open(P_DATA_DIR + str(args['task_id']) + '.data.pkl', 'rb') as f:
+        data_ = pkl.load(f)
+
+    # read content of data and metadata
+    candidates = data_['candidates']
+    candid2idx, idx2candid = metadata['candid2idx'], metadata['idx2candid']
+
+    # get train/test/val data
+    train, test, val = data_['train'], data_['test'], data_['val']
+
+    # gather more information from metadata
     sentence_size = metadata['sentence_size']
     w2idx = metadata['w2idx']
     idx2w = metadata['idx2w']
@@ -130,9 +182,11 @@ if __name__ == '__main__':
     vocab_size = metadata['vocab_size']
     n_cand = metadata['n_cand']
     candidate_sentence_size = metadata['candidate_sentence_size']
+
     # vectorize candidates
     candidates_vec = data_utils.vectorize_candidates(candidates, w2idx, candidate_sentence_size)
-    #
+
+    ###
     # create model
     model = model['memn2n']( # why?
                 batch_size= BATCH_SIZE,
