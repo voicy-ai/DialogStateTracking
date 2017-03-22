@@ -20,11 +20,11 @@ CKPT_DIR= 'ckpt/'
 '''
     dictionary of models
         select model from here
-'''
 model = {
         'memn2n' : memn2n.MemN2NDialog
         }# add models, as you implement
 
+'''
 
 '''
     run prediction on dataset
@@ -45,14 +45,14 @@ def batch_predict(S,Q,n, batch_size):
     preprocess data
 
 '''
-def prepare_data(args):
+def prepare_data(args, task_id):
     # get candidates (restaurants)
-    candidates, candid2idx, idx2candid = data_utils.load_candidates(task_id= args['task_id'],
+    candidates, candid2idx, idx2candid = data_utils.load_candidates(task_id=task_id,
                                                 candidates_f= DATA_DIR + 'dialog-babi-candidates.txt')
     # get data
     train, test, val = data_utils.load_dialog_task(
             data_dir= DATA_DIR, 
-            task_id= args['task_id'],
+            task_id= task_id,
             candid_dic= candid2idx, 
             isOOV= False)
     ##
@@ -67,7 +67,7 @@ def prepare_data(args):
             'test' : test,
             'val' : val
             }
-    with open(P_DATA_DIR + str(args['task_id']) + '.data.pkl', 'wb') as f:
+    with open(P_DATA_DIR + str(task_id) + '.data.pkl', 'wb') as f:
         pkl.dump(data_, f)
 
     ### 
@@ -75,7 +75,7 @@ def prepare_data(args):
     metadata['candid2idx'] = candid2idx
     metadata['idx2candid'] = idx2candid
     
-    with open(P_DATA_DIR + str(args['task_id']) + '.metadata.pkl', 'wb') as f:
+    with open(P_DATA_DIR + str(task_id) + '.metadata.pkl', 'wb') as f:
         pkl.dump(metadata, f)
 
 
@@ -83,7 +83,7 @@ def prepare_data(args):
     parse arguments
 
 '''
-def parse_args():
+def parse_args(args):
     parser = argparse.ArgumentParser(
             description='Train Model for Goal Oriented Dialog Task : bAbI(6)')
     group = parser.add_mutually_exclusive_group(required=True)
@@ -103,7 +103,7 @@ def parse_args():
                         help='num iteration of training over train set')
     parser.add_argument('--log_file', required=False, type=str, default='log.txt',
                         help='enter the name of the log file')
-    args = vars(parser.parse_args())
+    args = vars(parser.parse_args(args))
     return args
 
 
@@ -119,6 +119,7 @@ class InteractiveSession():
         self.w2idx = w2idx
         self.n_cand = model._candidates_size
         self.memory_size = memory_size
+        self.model = model
 
     def reply(self, msg):
         line = msg.strip().lower()
@@ -131,11 +132,11 @@ class InteractiveSession():
             data = [(self.context, u, -1)]
             s, q, a = data_utils.vectorize_data(data, 
                     self.w2idx, 
-                    model._sentence_size, 
+                    self.model._sentence_size, 
                     1, 
                     self.n_cand, 
                     self.memory_size)
-            preds = model.predict(s,q)
+            preds = self.model.predict(s,q)
             r = self.idx2candid[preds[0]]
             reply_msg = r
             r = data_utils.tokenize(r)
@@ -150,14 +151,16 @@ class InteractiveSession():
 
                    
 
-if __name__ == '__main__':
-    # get user arguments
-    args = parse_args()
+def main(args):
+    # parse args
+    args = parse_args(args)
 
     # prepare data
     if args['prep_data']:
         print('\n>> Preparing Data\n')
-        prepare_data(args)
+        for i in range(1,7):
+            print(' TASK#{}\n'.format(i))
+            prepare_data(args, task_id=i)
         sys.exit()
 
     # ELSE
@@ -188,7 +191,8 @@ if __name__ == '__main__':
 
     ###
     # create model
-    model = model['memn2n']( # why?
+    #model = model['memn2n']( # why?
+    model = memn2n.MemN2NDialog(
                 batch_size= BATCH_SIZE,
                 vocab_size= vocab_size, 
                 candidates_size= n_cand, 
@@ -239,9 +243,8 @@ if __name__ == '__main__':
         log_handle.close()
 
     else: # inference
-        #print('\nDude! where\'s the inference? \nNot implemented yet. Come back!')
-        #
-        #  restore checkpoint
+        ###
+        # restore checkpoint
         ckpt = tf.train.get_checkpoint_state(CKPT_DIR + str(args['task_id']) )
         if ckpt and ckpt.model_checkpoint_path:
             print('\n>> restoring checkpoint from', ckpt.model_checkpoint_path)
@@ -250,8 +253,15 @@ if __name__ == '__main__':
 
         # create an interactive session instance
         isess = InteractiveSession(model, idx2candid, w2idx, n_cand, memory_size)
+        
+        if args['infer']:
+            query = ''
+            while query!= 'exit':
+                query = input('>> ')
+                print('>> ' + isess.reply(query))
 
-        query = ''
-        while query!= 'exit':
-            query = input('>> ')
-            print('>> ' + isess.reply(query))
+
+# _______MAIN_______
+if __name__ == '__main__':
+    main(sys.argv[1:])
+    #main(['--infer', '--task_id=1'])
