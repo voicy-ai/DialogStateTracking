@@ -137,7 +137,7 @@ class MemN2NDialog(object):
         init_op = tf.global_variables_initializer()
         self._sess = session
         self._sess.run(init_op)
-        self.saver = tf.train.Saver()
+        self.saver = tf.train.Saver(max_to_keep=1)
 
 
     def _build_inputs(self):
