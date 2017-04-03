@@ -2,6 +2,8 @@
 
 The objective of this project is to explore neural network architectures for question answering and goal oriented dialog systems. We will train on [(6) dialog bAbI tasks](https://research.fb.com/downloads/babi/). Tensorflow is used for building the models. I have listed some of the influential/interesting papers below. If I have missed something, let me know.
 
+[Documentation](https://github.com/voicy-ai/DialogStateTracking/wiki) is available as [wiki](https://github.com/voicy-ai/DialogStateTracking/wiki).
+
 
 ## The (6) dialog bAbI tasks
 
