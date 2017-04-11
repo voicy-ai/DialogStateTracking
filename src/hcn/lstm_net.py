@@ -10,8 +10,8 @@ class LSTM_net():
             tf.reset_default_graph()
 
             # placeholders
-            features_ = tf.placeholders(tf.float32, [None,], name='input_features')
-            init_state_ = tf.placeholders(tf.float32, [state_size], name='init_state')
+            features_ = tf.placeholders(tf.float32, [None, input_size], name='input_features')
+            init_state_ = tf.placeholders(tf.float32, [nb_hidden], name='init_state')
  
 
             # input projection
@@ -22,4 +22,6 @@ class LSTM_net():
             # add relu/tanh here if necessary
             projected_features = tf.matmul(features_, Wi) + bi 
 
-            lstm_f = tf.nn.rnn_cell.LSTMCell(state_size, state_is_tuple=True)
+            lstm_f = tf.nn.rnn_cell.LSTMCell(nb_hidden, state_is_tuple=True)
+
+            lstm_op, state = lstm_f(inputs=projected_features, state=init_state_)
