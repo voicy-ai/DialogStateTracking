@@ -10,7 +10,7 @@ The objective of this project is to explore neural network architectures for que
 
 This section presents the set of 6 tasks for testing end-to-end dialog systems in the restaurant domain. Each task tests a unique aspect of dialog. 
 
-![](tasks.png)
+![](images/tasks.png)
 
 
 ## Setup
