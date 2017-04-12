@@ -2,7 +2,7 @@ import ent_tracker
 
 
 def read_content():
-    return ' '.join([' '.join(row) for row in read_dialogs()])
+    return ' '.join(get_utterances())
 
 def read_dialogs():
 

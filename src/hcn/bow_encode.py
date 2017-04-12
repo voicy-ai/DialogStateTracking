@@ -1,6 +1,7 @@
 import util
 import numpy as np
 
+
 '''
     Bag of Words
     
@@ -19,7 +20,9 @@ class BoW_encoder():
         self.vocab_size = len(self.vocab)
 
     def get_vocab(self):
-        vocab = list(set( util.read_content().split(' ') ))
+        content = util.read_content()
+        vocab = sorted(set(content.split(' ')))
+        # remove empty strings
         return [ item for item in vocab if item ]
 
     def encode(self, utterance):
