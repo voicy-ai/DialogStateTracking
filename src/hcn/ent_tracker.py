@@ -34,11 +34,11 @@ class EntityTracker():
         else:
             return ent
 
-    def extract_entities(self, utterance):
+    def extract_entities(self, utterance, update=True):
         tokenized = []
         for word in utterance.split(' '):
             entity = self.ent_type(word)
-            if word != entity:
+            if word != entity and update:
                 self.entities[entity] = word
 
             tokenized.append(entity)
