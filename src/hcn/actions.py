@@ -8,18 +8,18 @@ import numpy as np
     2. 'api_call <party_size> <rest_type>',
     3. 'great let me do the reservation',
     4. 'hello what can i help you with today',
-    5. 'here it is ',
-    6. 'how many people would be in your party',
-    7. "i'm on it",
-    8. 'is there anything i can help you with',
-    9. 'ok let me look into some options for you',
-    10. 'sure is there anything else to update',
-    11. 'sure let me find an other option for you',
-    12. 'what do you think of this option: ',
-    13. 'where should it be',
-    14. 'which price range are looking for',
-    15. "you're welcome",
-    16. 'No choices available that fit your criteria' (custom template)
+    5. 'here it is <info_address>',
+    6. 'here it is <info_phone>',
+    7. 'how many people would be in your party',
+    8. "i'm on it",
+    9. 'is there anything i can help you with',
+    10. 'ok let me look into some options for you',
+    11. 'sure is there anything else to update',
+    12. 'sure let me find an other option for you',
+    13. 'what do you think of this option: ',
+    14. 'where should it be',
+    15. 'which price range are looking for',
+    16. "you're welcome",
 
     [1] : cuisine
     [2] : location
@@ -33,28 +33,28 @@ class ActionTracker():
         # maintain an instance of EntityTracker
         self.et = ent_tracker
         # get a list of action templates
-        self.action_templates = self.action_templates()
+        self.action_templates = self.get_action_templates()
         self.action_size = len(self.action_templates)
         # action mask
         self.am = np.zeros([self.action_size], dtype=np.float32)
         # action mask lookup, built on intuition
         self.am_dict = {
-                '0000' : [ 1,4,6,8,13,14,16 ],
-                '0001' : [ 1,4,6,8,13,16 ],
-                '0010' : [ 1,4,8,13,14,16 ],
-                '0011' : [ 1,4,8,13,16 ],
-                '0100' : [ 1,4,6,8,14,16 ],
-                '0101' : [ 1,4,6,8,16 ],
-                '0110' : [ 1,4,8,14,16 ],
-                '0111' : [ 1,4,8,16 ],
-                '1000' : [ 4,6,8,13,14,16 ],
-                '1001' : [ 4,6,8,13,16 ],
-                '1010' : [ 4,8,13,14,16 ],
-                '1011' : [ 4,8,13,16 ],
-                '1100' : [ 4,6,8,14,16 ],
-                '1101' : [ 4,6,8,16 ],
-                '1110' : [ 4,8,14,16 ],
-                '1111' : [ 2,3,5,7,9,10,11,12,15,16 ]
+                '0000' : [ 4,8,1,14,7,15],
+                '0001' : [ 4,8,1,14,7],
+                '0010' : [ 4,8,1,14,15],
+                '0011' : [ 4,8,1,14],
+                '0100' : [ 4,8,1,7,15],
+                '0101' : [ 4,8,1,7],
+                '0110' : [ 4,8,1,15],
+                '0111' : [ 4,8,1],
+                '1000' : [ 4,8,14,7,15],
+                '1001' : [ 4,8,14,7],
+                '1010' : [ 4,8,14,15],
+                '1011' : [ 4,8,14],
+                '1100' : [ 4,8,7,15],
+                '1101' : [ 4,8,7],
+                '1110' : [ 4,8,15],
+                '1111' : [ 2,3,5,6,8,9,10,11,12,13,16 ]
                 }
 
 
@@ -70,17 +70,23 @@ class ActionTracker():
     
         return construct_mask(ctxt_f)
 
-    def action_templates(self):
+    def get_action_templates(self):
         responses = list(set([ self.et.extract_entities(response, update=False) 
             for response in util.get_responses() ]))
 
         def extract_(response):
             template = []
             for word in response.split(' '):
-                if 'resto_' in word:
-                    word = '<restaurant>'
-                template.append(word)
+                if 'resto_' in word: 
+                    if 'phone' in word:
+                        template.append('<info_phone>')
+                    elif 'address' in word:
+                        template.append('<info_address>')
+                    else:
+                        template.append('<restaurant>')
+                else:
+                    template.append(word)
             return ' '.join(template)
 
         # extract restaurant entities
-        return sorted(set([ extract_(response) for response in responses ])) + ['doh! no choices available that fit your criteria.']
+        return sorted(set([ extract_(response) for response in responses ]))
