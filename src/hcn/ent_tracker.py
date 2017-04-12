@@ -11,6 +11,7 @@ class EntityTracker():
                 '<party_size>' : None,
                 '<rest_type>' : None,
                 }
+        self.num_features = 4 # tracking 4 entities
         self.rating = None
 
         # constants
@@ -34,6 +35,7 @@ class EntityTracker():
         else:
             return ent
 
+
     def extract_entities(self, utterance, update=True):
         tokenized = []
         for word in utterance.split(' '):
@@ -45,10 +47,13 @@ class EntityTracker():
 
         return ' '.join(tokenized)
 
+
     def context_features(self):
        keys = list(set(self.entities.keys()))
-       return np.array( [bool(self.entities[key]) for key in keys], 
-               dtype=np.float32 )
+       self.ctxt_features = np.array( [bool(self.entities[key]) for key in keys], 
+                                   dtype=np.float32 )
+       return self.ctxt_features
+
 
     def action_mask(self):
         print('Not yet implemented. Need a list of action templates!')
