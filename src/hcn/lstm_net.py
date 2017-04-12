@@ -54,7 +54,7 @@ class LSTM_net():
             loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=action_)
 
             # train op
-            train_op = tf.train.AdadeltaOptimizer().minimize(loss)
+            train_op = tf.train.AdadeltaOptimizer(0.1).minimize(loss)
 
             # attach symbols to self
             self.loss = loss
@@ -62,6 +62,7 @@ class LSTM_net():
             self.probs = probs
             self.logits = logits
             self.state = state
+            self.train_op = train_op
 
             # attach placeholders
             self.features_ = features_
@@ -97,3 +98,18 @@ class LSTM_net():
         self.init_state_h = state_h
         # return argmax
         return prediction
+
+    # training
+    def train_step(self, features, action, action_mask):
+        _, loss_value, state_c, state_h = self.sess.run( [self.train_op, self.loss, self.state.c, self.state.h],
+                feed_dict = {
+                    self.features_ : features.reshape([1, self.obs_size]),
+                    self.action_ : [action],
+                    self.init_state_c_ : self.init_state_c,
+                    self.init_state_h_ : self.init_state_h,
+                    self.action_mask_ : action_mask
+                    })
+        # maintain state
+        self.init_state_c = state_c
+        self.init_state_h = state_h
+        return loss_value
