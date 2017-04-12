@@ -1,6 +1,3 @@
-import ent_tracker
-
-
 def read_content():
     return ' '.join(get_utterances())
 
