@@ -18,6 +18,7 @@ class LSTM_net():
             features_ = tf.placeholder(tf.float32, [1, obs_size], name='input_features')
             init_state_c_, init_state_h_ = ( tf.placeholder(tf.float32, [1, nb_hidden]) for _ in range(2) )
             action_ = tf.placeholder(tf.int32, name='ground_truth_action')
+            action_mask_ = tf.placeholder(tf.float32, [action_size], name='action_mask')
 
             # input projection
             Wi = tf.get_variable('Wi', [obs_size, nb_hidden], 
@@ -43,10 +44,11 @@ class LSTM_net():
             # get logits
             logits = tf.matmul(state_reshaped, Wo) + bo
             # probabilities
-            probs = tf.nn.softmax(logits)
+            #  normalization : elemwise multiply with action mask
+            probs = tf.multiply(tf.squeeze(tf.nn.softmax(logits)), action_mask_)
             
             # prediction
-            prediction = tf.arg_max(tf.squeeze(probs), dimension=0)
+            prediction = tf.arg_max(probs, dimension=0)
 
             # loss
             loss = tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=action_)
@@ -66,6 +68,7 @@ class LSTM_net():
             self.init_state_c_ = init_state_c_
             self.init_state_h_ = init_state_h_
             self.action_ = action_
+            self.action_mask_ = action_mask_
 
         # build graph
         __graph__()
@@ -80,13 +83,14 @@ class LSTM_net():
 
 
     # forward propagation
-    def forward(self, features):
+    def forward(self, features, action_mask):
         # forward
         probs, prediction, state_c, state_h = self.sess.run( [self.probs, self.prediction, self.state.c, self.state.h], 
                 feed_dict = { 
                     self.features_ : features.reshape([1,self.obs_size]), 
                     self.init_state_c_ : self.init_state_c,
-                    self.init_state_h_ : self.init_state_h
+                    self.init_state_h_ : self.init_state_h,
+                    self.action_mask_ : action_mask
                     })
         # maintain state
         self.init_state_c = state_c
