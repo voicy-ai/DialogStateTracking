@@ -17,7 +17,10 @@ class UtteranceEmbed():
     def encode(self, utterance):
         embs = [ self.model[word] for word in utterance.split(' ') if word and word in self.model]
         # average of embeddings
-        return np.mean(embs, axis=0)
+        if len(embs):
+            return np.mean(embs, axis=0)
+        else:
+            return np.zeros([self.dim],np.float32)
 
     def create_model(self, fname='text8'):
         sentences = word2vec.Text8Corpus('data/text8')
