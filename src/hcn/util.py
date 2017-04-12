@@ -33,20 +33,3 @@ def get_entities():
 
     with open('data/dialog-babi-kb-all.txt') as f:
         return filter_([item.split('\t')[-1] for item in f.read().split('\n') ])
-
-
-def action_templates():
-    ent_tracker_ = ent_tracker.EntityTracker()
-    responses = list(set([ ent_tracker_.extract_entities(response, update=False) 
-        for response in get_responses() ]))
-
-    def extract_(response):
-        template = []
-        for word in response.split(' '):
-            if 'resto_' in word:
-                word = '<restaurant>'
-            template.append(word)
-        return ' '.join(template)
-
-    # extract restaurant entities
-    return sorted(set([ extract_(response) for response in responses ])) + ['doh! no choices available that fit your criteria.']
