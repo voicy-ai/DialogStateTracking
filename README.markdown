@@ -60,7 +60,7 @@ Task  |  Training exmaples   |  Accuracy on Dev set  |
 1     |  200	              |  100%		            |
 
 
-![](images/hcn-interaction)
+![](images/hcn-interaction.png)
 
 
 ## Papers
