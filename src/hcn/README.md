@@ -27,3 +27,8 @@ python3 interact.py
 # checkpoint from ckpt/ is loaded
 #  start interaction
 ```
+
+## Sample Interaction
+
+
+![](https://raw.githubusercontent.com/voicy-ai/DialogStateTracking/master/images/hcn-interaction.png)
