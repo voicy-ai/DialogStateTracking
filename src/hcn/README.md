@@ -15,5 +15,5 @@ bash download.sh
 
 ### TODO
 
-- [ ] Organize trian set as a list of dialogues
-	- [ ] Maintain entity state, action mask for each dialogue
+- [x] Organize trian set as a list of dialogues
+	- [x] Maintain entity state, action mask for each dialogue

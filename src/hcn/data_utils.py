@@ -20,17 +20,19 @@ class Data():
         self.trainset = self.prepare_data()
 
     def prepare_data(self):
+        # get dialogs from file
+        dialogs, dialog_indices = util.read_dialogs(with_indices=True)
         # get utterances
-        utterances = util.get_utterances()
+        utterances = util.get_utterances(dialogs)
         # get responses
-        responses = util.get_responses()
+        responses = util.get_responses(dialogs)
         responses = [ self.get_template_id(response) for response in responses ]
 
         trainset = []
         for u,r in zip(utterances, responses):
             trainset.append((u,r))
 
-        return trainset
+        return trainset, dialog_indices
 
 
     def get_template_id(self, response):

@@ -113,3 +113,8 @@ class LSTM_net():
         self.init_state_c = state_c
         self.init_state_h = state_h
         return loss_value
+
+    def reset_state(self):
+        # set init state to zeros
+        self.init_state_c = np.zeros([1,self.nb_hidden], dtype=np.float32)
+        self.init_state_h = np.zeros([1,self.nb_hidden], dtype=np.float32)
