@@ -55,6 +55,7 @@ class Trainer():
             print(':: {}.dev accuracy {}\n'.format(j+1, accuracy))
 
             if accuracy > 0.99:
+                self.net.save()
                 break
 
     def dialog_train(self, dialog):

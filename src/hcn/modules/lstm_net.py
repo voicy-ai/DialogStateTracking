@@ -118,3 +118,19 @@ class LSTM_net():
         # set init state to zeros
         self.init_state_c = np.zeros([1,self.nb_hidden], dtype=np.float32)
         self.init_state_h = np.zeros([1,self.nb_hidden], dtype=np.float32)
+
+    # save session to checkpoint
+    def save(self):
+        saver = tf.train.Saver()
+        saver.save(self.sess, 'ckpt/hcn.ckpt', global_step=0)
+        print('\n:: saved to ckpt/hcn.ckpt \n')
+
+    # restore session from checkpoint
+    def restore(self):
+        saver = tf.train.Saver()
+        ckpt = tf.train.get_checkpoint_state('ckpt/')
+        if ckpt and ckpt.model_checkpoint_path:
+            print('\n:: restoring checkpoint from', ckpt.model_checkpoint_path, '\n')
+            saver.restore(self.sess, ckpt.model_checkpoint_path)
+        else:
+            print('\n:: <ERR> checkpoint not found! \n')

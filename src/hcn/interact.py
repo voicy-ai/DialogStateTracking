@@ -28,6 +28,9 @@ class InteractiveSession():
                        action_size=action_size,
                        nb_hidden=nb_hidden)
 
+        # restore checkpoint
+        self.net.restore()
+
 
     def interact(self):
         # create entity tracker
