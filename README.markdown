@@ -55,9 +55,12 @@ Task  |  Training Accuracy  |  Validation Accuracy  |
 
 ### Results
 
+
 Task  |  Training exmaples   |  Accuracy on Dev set  |
 ------|---------------------|-----------------------|
-1     |  200	              |  100%		            |
+5     |  200	              |  100%		            |
+
+### Sample Interaction
 
 
 ![](images/hcn-interaction.png)
