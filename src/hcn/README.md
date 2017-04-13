@@ -5,15 +5,25 @@
 
 ## Setup
 
+
 ```bash
 # install prerequisites
 sudo -H pip3 install -r requirements.txt
 cd data/ # we are inside 'src/hcn/data'
 bash download.sh
-# See Training.ipynb for training and prediction details
 ```
 
-### TODO
+## Execution
 
-- [x] Organize trian set as a list of dialogues
-	- [x] Maintain entity state, action mask for each dialogue
+
+```bash
+# training
+python3 train.py
+# training stops when accuracy on dev set becomes > 0.99
+#  trained model is saved to ckpt/
+
+# interaction 
+python3 interact.py
+# checkpoint from ckpt/ is loaded
+#  start interaction
+```
