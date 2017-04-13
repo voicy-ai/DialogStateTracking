@@ -1,14 +1,14 @@
-from entities import EntityTracker
-from bow import BoW_encoder
-import lstm_net
-from embed import UtteranceEmbed
-from actions import ActionTracker
-from data_utils import Data
+from modules.entities import EntityTracker
+from modules.bow import BoW_encoder
+from  modules.lstm_net import LSTM_net
+from modules.embed import UtteranceEmbed
+from modules.actions import ActionTracker
+from modules.data_utils import Data
+import modules.util as util
 
 import numpy as np
-
 import sys
-import util
+
 
 class Trainer():
 
@@ -28,7 +28,7 @@ class Trainer():
         action_size = at.action_size
         nb_hidden = 128
 
-        self.net = lstm_net.LSTM_net(obs_size=obs_size,
+        self.net = LSTM_net(obs_size=obs_size,
                        action_size=action_size,
                        nb_hidden=nb_hidden)
 
