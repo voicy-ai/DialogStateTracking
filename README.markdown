@@ -1,4 +1,4 @@
-# Please contact info@voicy.ai to implement your enterprise needs for Chat Bot /Virtual Agent Technology.
+# Please contact info@voicy.ai to implement your enterprise needs for Chat Bot/Virtual Agent Technology.
 Voicy.AI is pioneering implementation of research papers for Dialog State Tracking and Chat-Bot Technology. 
 
 # Goal Oriented Dialog System
