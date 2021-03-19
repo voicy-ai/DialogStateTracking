@@ -7,7 +7,7 @@ appdirs==1.4.3
 click==6.7
 Flask==0.12
 itsdangerous==0.24
-Jinja2==2.9.5
+Jinja2==2.11.3
 MarkupSafe==1.0
 packaging==16.8
 pyparsing==2.2.0
